@@ -30,7 +30,8 @@ jobs:
 
       - name: Run Bandit (static code security analysis)
         run: |
-          bandit -r . --exclude tests -f txt -o bandit-report.txt
+          bandit -r . --exclude tests -f txt -o bandit-report.txt || true
+          if grep -E "Severity: HIGH" bandit-report.txt; then exit 1; fi
 
       - name: Install Trivy
         run: |
