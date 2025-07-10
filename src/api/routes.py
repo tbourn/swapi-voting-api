@@ -27,7 +27,7 @@ Author
 - Thomas Bournaveas <thomas.bournaveas@gmail.com> — Backend Engineering & Architecture
 """
 
-from typing import List
+from typing import Any, Dict, List, Union
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -71,7 +71,7 @@ CHARACTER_EXAMPLE = {
     ],
 }
 
-CHARACTER_LIST_RESPONSES = {
+CHARACTER_LIST_RESPONSES: dict[int | str, dict[str, Any]] = {
     200: {
         "description": "Successful Response",
         "content": {"application/json": {"example": [CHARACTER_EXAMPLE]}},
@@ -86,7 +86,7 @@ CHARACTER_LIST_RESPONSES = {
     },
 }
 
-CHARACTER_SINGLE_RESPONSES = {
+CHARACTER_SINGLE_RESPONSES: dict[int | str, dict[str, Any]] = {
     200: {
         "description": "Successful Response",
         "content": {"application/json": {"example": CHARACTER_EXAMPLE}},
@@ -122,14 +122,14 @@ FILM_EXAMPLE = {
     "species": [],
 }
 
-FILM_LIST_RESPONSES = {
+FILM_LIST_RESPONSES: dict[int | str, dict[str, Any]] = {
     200: {
         "description": "Successful Response",
         "content": {"application/json": {"example": [FILM_EXAMPLE]}},
     },
 }
 
-FILM_SEARCH_RESPONSES = {
+FILM_SEARCH_RESPONSES: dict[int | str, dict[str, Any]] = {
     200: {
         "description": "Successful Search",
         "content": {"application/json": {"example": [FILM_EXAMPLE]}},
@@ -144,7 +144,7 @@ FILM_SEARCH_RESPONSES = {
     },
 }
 
-FILM_SINGLE_RESPONSES = {
+FILM_SINGLE_RESPONSES: dict[int | str, dict[str, Any]] = {
     200: {
         "description": "Successful Response",
         "content": {"application/json": {"example": FILM_EXAMPLE}},
@@ -183,7 +183,7 @@ STARSHIP_SEARCH_EXAMPLE = {
     "starship_class": "Light freighter",
 }
 
-STARSHIP_LIST_RESPONSES = {
+STARSHIP_LIST_RESPONSES: dict[int | str, dict[str, Any]] = {
     200: {
         "description": "Successful Response",
         "content": {
@@ -192,7 +192,7 @@ STARSHIP_LIST_RESPONSES = {
     },
 }
 
-STARSHIP_SEARCH_RESPONSES = {
+STARSHIP_SEARCH_RESPONSES: dict[int | str, dict[str, Any]] = {
     200: {
         "description": "Successful Search",
         "content": {"application/json": {"example": [STARSHIP_SEARCH_EXAMPLE]}},
@@ -207,7 +207,7 @@ STARSHIP_SEARCH_RESPONSES = {
     },
 }
 
-STARSHIP_SINGLE_RESPONSES = {
+STARSHIP_SINGLE_RESPONSES: dict[int | str, dict[str, Any]] = {
     200: {
         "description": "Successful Response",
         "content": {"application/json": {"example": STARSHIP_SEARCH_EXAMPLE}},
