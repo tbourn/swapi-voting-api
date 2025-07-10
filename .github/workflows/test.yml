@@ -1,0 +1,51 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install development dependencies
+        run: |
+          pip install -r requirements-dev.txt
+
+      - name: Run static type checks (mypy)
+        run: |
+          mypy src
+
+      - name: Check code formatting (black)
+        run: |
+          black --check src
+
+      - name: Run tests with coverage
+        run: |
+          pytest --cov=src --cov-report=html --cov-report=term --cov-report=lcov --asyncio-mode=strict
+
+      - name: Upload lcov coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-lcov
+          path: coverage.lcov

@@ -1,0 +1,50 @@
+name: PR Code Analysis
+
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install production and dev dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Run static type checks (mypy)
+        run: |
+          mypy src
+
+      - name: Run tests with coverage
+        run: |
+          pytest --cov=src --cov-report=term --cov-report=xml --asyncio-mode=strict
+
+      - name: Upload coverage.xml artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: coverage.xml
+
+      - name: Install SonarScanner
+        run: |
+          npm install -g sonar-scanner
+
+      - name: Run SonarCloud Analysis (CLI)
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          sonar-scanner
+

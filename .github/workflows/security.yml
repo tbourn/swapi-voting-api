@@ -1,0 +1,52 @@
+name: Security Scan
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install security dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-security.txt
+
+      - name: Run Bandit (static code security analysis)
+        run: |
+          bandit -r . --exclude tests -f txt -o bandit-report.txt
+
+      - name: Install Trivy
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget
+          wget https://github.com/aquasecurity/trivy/releases/download/v0.49.1/trivy_0.49.1_Linux-64bit.deb
+          sudo dpkg -i trivy_0.49.1_Linux-64bit.deb
+
+      - name: Run Trivy filesystem security scan
+        run: |
+          trivy fs . --format table --output trivy-report.txt --ignore-unfixed --severity HIGH,CRITICAL
+
+      - name: Upload Security Reports as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-reports
+          path: |
+            bandit-report.txt
+            trivy-report.txt
