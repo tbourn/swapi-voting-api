@@ -31,7 +31,7 @@ Author
 
 from typing import List, Optional
 
-from pydantic import BaseModel, Field, constr
+from pydantic import BaseModel, constr
 from typing_extensions import Annotated
 
 StrictStr100 = Annotated[

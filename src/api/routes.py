@@ -27,11 +27,28 @@ Author
 - Thomas Bournaveas <thomas.bournaveas@gmail.com> — Backend Engineering & Architecture
 """
 
-from typing import Any, Dict, List, Union
+from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.api.responses import (
+    CHARACTER_LIST_RESPONSES,
+    CHARACTER_SINGLE_RESPONSES,
+    CONTENT_TYPE_JSON,
+    DETAIL_FILM_NOT_FOUND,
+    DETAIL_NO_CHARACTERS,
+    DETAIL_NO_FILMS,
+    DETAIL_NO_STARSHIPS,
+    DETAIL_STARSHIP_NOT_FOUND,
+    FILM_LIST_RESPONSES,
+    FILM_SEARCH_RESPONSES,
+    FILM_SINGLE_RESPONSES,
+    STARSHIP_LIST_RESPONSES,
+    STARSHIP_SEARCH_RESPONSES,
+    STARSHIP_SINGLE_RESPONSES,
+)
+from src.config.constants import MAX_PAGE_SIZE
 from src.crud.characters import (
     get_character,
     list_characters,
@@ -57,168 +74,6 @@ from src.services.import_service import (
 from src.utils.logger_util import log_error
 
 # ---------------------------------------------------------------------------
-# Shared Character Responses
-# ---------------------------------------------------------------------------
-
-CHARACTER_EXAMPLE = {
-    "id": 1,
-    "name": "Luke Skywalker",
-    "gender": "male",
-    "birth_year": "19BBY",
-    "films": [
-        {"id": 1, "title": "A New Hope"},
-        {"id": 2, "title": "The Empire Strikes Back"},
-    ],
-}
-
-CHARACTER_LIST_RESPONSES: dict[int | str, dict[str, Any]] = {
-    200: {
-        "description": "Successful Response",
-        "content": {"application/json": {"example": [CHARACTER_EXAMPLE]}},
-    },
-    404: {
-        "description": "Not Found",
-        "content": {
-            "application/json": {
-                "example": {"detail": "No characters found matching the query."}
-            }
-        },
-    },
-}
-
-CHARACTER_SINGLE_RESPONSES: dict[int | str, dict[str, Any]] = {
-    200: {
-        "description": "Successful Response",
-        "content": {"application/json": {"example": CHARACTER_EXAMPLE}},
-    },
-    404: {
-        "description": "Not Found",
-        "content": {"application/json": {"example": {"detail": "Character not found"}}},
-    },
-}
-
-# ---------------------------------------------------------------------------
-# Shared Film Responses
-# ---------------------------------------------------------------------------
-
-FILM_EXAMPLE = {
-    "id": 1,
-    "title": "A New Hope",
-    "episode_id": 4,
-    "opening_crawl": "It is a period of civil war...",
-    "director": "George Lucas",
-    "producer": "Gary Kurtz, Rick McCallum",
-    "release_date": "1977-05-25",
-    "created": "2014-12-10T14:23:31.880000",
-    "edited": "2014-12-20T19:49:45.256000",
-    "url": "https://swapi.info/api/films/1",
-    "characters": [
-        {"id": 1, "name": "Luke Skywalker"},
-        {"id": 2, "name": "C-3PO"},
-    ],
-    "planets": [],
-    "starships": [],
-    "vehicles": [],
-    "species": [],
-}
-
-FILM_LIST_RESPONSES: dict[int | str, dict[str, Any]] = {
-    200: {
-        "description": "Successful Response",
-        "content": {"application/json": {"example": [FILM_EXAMPLE]}},
-    },
-}
-
-FILM_SEARCH_RESPONSES: dict[int | str, dict[str, Any]] = {
-    200: {
-        "description": "Successful Search",
-        "content": {"application/json": {"example": [FILM_EXAMPLE]}},
-    },
-    404: {
-        "description": "No films found",
-        "content": {
-            "application/json": {
-                "example": {"detail": "No films found matching the query."}
-            }
-        },
-    },
-}
-
-FILM_SINGLE_RESPONSES: dict[int | str, dict[str, Any]] = {
-    200: {
-        "description": "Successful Response",
-        "content": {"application/json": {"example": FILM_EXAMPLE}},
-    },
-    404: {
-        "description": "Film not found",
-        "content": {"application/json": {"example": {"detail": "Film not found"}}},
-    },
-}
-
-# ---------------------------------------------------------------------------
-# Shared Starship Responses
-# ---------------------------------------------------------------------------
-
-STARSHIP_EXAMPLE_1 = {
-    "id": 1,
-    "name": "CR90 corvette",
-    "model": "CR90 corvette",
-    "manufacturer": "Corellian Engineering Corporation",
-    "starship_class": "corvette",
-}
-
-STARSHIP_EXAMPLE_2 = {
-    "id": 2,
-    "name": "Star Destroyer",
-    "model": "Imperial I-class Star Destroyer",
-    "manufacturer": "Kuat Drive Yards",
-    "starship_class": "Star Destroyer",
-}
-
-STARSHIP_SEARCH_EXAMPLE = {
-    "id": 5,
-    "name": "Millennium Falcon",
-    "model": "YT-1300 light freighter",
-    "manufacturer": "Corellian Engineering Corporation",
-    "starship_class": "Light freighter",
-}
-
-STARSHIP_LIST_RESPONSES: dict[int | str, dict[str, Any]] = {
-    200: {
-        "description": "Successful Response",
-        "content": {
-            "application/json": {"example": [STARSHIP_EXAMPLE_1, STARSHIP_EXAMPLE_2]}
-        },
-    },
-}
-
-STARSHIP_SEARCH_RESPONSES: dict[int | str, dict[str, Any]] = {
-    200: {
-        "description": "Successful Search",
-        "content": {"application/json": {"example": [STARSHIP_SEARCH_EXAMPLE]}},
-    },
-    404: {
-        "description": "No starships found",
-        "content": {
-            "application/json": {
-                "example": {"detail": "No starships found matching the query."}
-            }
-        },
-    },
-}
-
-STARSHIP_SINGLE_RESPONSES: dict[int | str, dict[str, Any]] = {
-    200: {
-        "description": "Successful Response",
-        "content": {"application/json": {"example": STARSHIP_SEARCH_EXAMPLE}},
-    },
-    404: {
-        "description": "Starship not found",
-        "content": {"application/json": {"example": {"detail": "Starship not found"}}},
-    },
-}
-
-# ---------------------------------------------------------------------------
 # Create the API router
 # ---------------------------------------------------------------------------
 
@@ -237,7 +92,7 @@ router = APIRouter()
         202: {
             "description": "Successful import",
             "content": {
-                "application/json": {
+                CONTENT_TYPE_JSON: {
                     "example": {"message": "Character import completed."}
                 }
             },
@@ -246,7 +101,7 @@ router = APIRouter()
             "model": CharacterImportErrorResponse,
             "description": "Bad Gateway",
             "content": {
-                "application/json": {
+                CONTENT_TYPE_JSON: {
                     "example": {"error": "Failed to import characters from SWAPI."}
                 }
             },
@@ -282,14 +137,14 @@ async def import_characters(db: AsyncSession = Depends(get_db)):
         202: {
             "description": "Successful import",
             "content": {
-                "application/json": {"example": {"message": "Film import completed."}}
+                CONTENT_TYPE_JSON: {"example": {"message": "Film import completed."}}
             },
         },
         502: {
             "model": FilmImportErrorResponse,
             "description": "Bad Gateway",
             "content": {
-                "application/json": {
+                CONTENT_TYPE_JSON: {
                     "example": {"error": "Failed to import films from SWAPI."}
                 }
             },
@@ -325,7 +180,7 @@ async def import_films(db: AsyncSession = Depends(get_db)):
         202: {
             "description": "Successful import",
             "content": {
-                "application/json": {
+                CONTENT_TYPE_JSON: {
                     "example": {"message": "Starship import completed."}
                 }
             },
@@ -334,7 +189,7 @@ async def import_films(db: AsyncSession = Depends(get_db)):
             "model": StarshipImportErrorResponse,
             "description": "Bad Gateway",
             "content": {
-                "application/json": {
+                CONTENT_TYPE_JSON: {
                     "example": {"error": "Failed to import starships from SWAPI."}
                 }
             },
@@ -374,7 +229,7 @@ async def import_starships(db: AsyncSession = Depends(get_db)):
 )
 async def get_characters(
     skip: int = Query(0, ge=0),
-    limit: int = Query(20, le=100),
+    limit: int = Query(20, le=MAX_PAGE_SIZE),
     db: AsyncSession = Depends(get_db),
 ):
     """
@@ -414,9 +269,7 @@ async def search_characters(
     """
     results = await search_characters_by_name(db, name=q)
     if not results:
-        raise HTTPException(
-            status_code=404, detail="No characters found matching the query."
-        )
+        raise HTTPException(status_code=404, detail=DETAIL_NO_CHARACTERS)
     return results
 
 
@@ -455,7 +308,7 @@ async def get_character_by_id(character_id: int, db: AsyncSession = Depends(get_
 )
 async def get_films(
     skip: int = Query(0, ge=0),
-    limit: int = Query(20, le=100),
+    limit: int = Query(20, le=MAX_PAGE_SIZE),
     db: AsyncSession = Depends(get_db),
 ):
     """
@@ -495,9 +348,7 @@ async def search_films(
     """
     results = await search_films_by_title(db, title=q)
     if not results:
-        raise HTTPException(
-            status_code=404, detail="No films found matching the query."
-        )
+        raise HTTPException(status_code=404, detail=DETAIL_NO_FILMS)
     return results
 
 
@@ -520,7 +371,7 @@ async def get_film_by_id(film_id: int, db: AsyncSession = Depends(get_db)):
     """
     film = await get_film(db, film_id)
     if not film:
-        raise HTTPException(status_code=404, detail="Film not found")
+        raise HTTPException(status_code=404, detail=DETAIL_FILM_NOT_FOUND)
     return film
 
 
@@ -536,7 +387,7 @@ async def get_film_by_id(film_id: int, db: AsyncSession = Depends(get_db)):
 )
 async def get_starships(
     skip: int = Query(0, ge=0),
-    limit: int = Query(20, le=100),
+    limit: int = Query(20, le=MAX_PAGE_SIZE),
     db: AsyncSession = Depends(get_db),
 ):
     """
@@ -576,9 +427,7 @@ async def search_starships(
     """
     results = await search_starships_by_name(db, name=q)
     if not results:
-        raise HTTPException(
-            status_code=404, detail="No starships found matching the query."
-        )
+        raise HTTPException(status_code=404, detail=DETAIL_NO_STARSHIPS)
     return results
 
 
@@ -601,5 +450,5 @@ async def get_starship_by_id(starship_id: int, db: AsyncSession = Depends(get_db
     """
     starship = await get_starship(db, starship_id)
     if not starship:
-        raise HTTPException(status_code=404, detail="Starship not found")
+        raise HTTPException(status_code=404, detail=DETAIL_STARSHIP_NOT_FOUND)
     return starship
