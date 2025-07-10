@@ -1,0 +1,7 @@
+asgi-lifespan
+black
+mypy
+pytest
+pytest-asyncio
+pytest-cov
+types-requests
