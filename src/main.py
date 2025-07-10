@@ -123,7 +123,7 @@ app.add_middleware(
 
 app.add_middleware(
     RateLimitAndBlocklistMiddleware,
-    max_requests=100,
+    max_requests=1000,
     window_seconds=3600,
 )
 
