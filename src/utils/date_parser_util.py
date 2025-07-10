@@ -71,7 +71,6 @@ def parse_iso_datetime(datetime_str: str | None) -> datetime | None:
     if not datetime_str:
         return None
     try:
-        # Handle potential 'Z' suffix (UTC)
         return datetime.fromisoformat(datetime_str.replace("Z", "+00:00"))
     except ValueError:
         log_error(

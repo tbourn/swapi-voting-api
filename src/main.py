@@ -121,11 +121,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# app.add_middleware(
-#     RateLimitAndBlocklistMiddleware,
-#     max_requests=100,
-#     window_seconds=3600,
-# )
+app.add_middleware(
+    RateLimitAndBlocklistMiddleware,
+    max_requests=100,
+    window_seconds=3600,
+)
 
 app.include_router(router)
 app.add_exception_handler(ExternalAPIError, external_api_error_handler)
