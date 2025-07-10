@@ -13,6 +13,8 @@ on:
 jobs:
   security-scan:
     runs-on: ubuntu-22.04
+    env:
+      UPSTASH_REDIS_URL: ${{ secrets.UPSTASH_REDIS_URL }}
 
     steps:
       - name: Checkout code
