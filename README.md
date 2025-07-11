@@ -35,7 +35,7 @@
 
 ## 📄 Description
 
-The **SWAPI Voting API** is a modern, production-ready RESTful microservice built with FastAPI. It integrates with the public Star Wars API (SWAPI) to fetch, store, and serve Star Wars characters, films, starships, and other entities with rich validation, search, and pagination.
+The **SWAPI Voting API** is a modern, production-ready RESTful microservice built with [FastAPI](https://fastapi.tiangolo.com/). It integrates with the public [Star Wars API (SWAPI)](https://swapi.info/) to fetch, store, and serve Star Wars characters, films, starships, and other entities with rich validation, search, and pagination.
 
 Ideal for building frontend integrations, fan projects, or learning best practices for professional Python APIs.
 
@@ -66,44 +66,45 @@ Ideal for building frontend integrations, fan projects, or learning best practic
 ### Windows
 
 ```powershell
-# Clone repository
+# Clone the repository
 git clone https://github.com/tbourn/swapi-voting-api.git
 cd swapi-voting-api
 
-# Create and activate virtual environment
+# Create and activate a virtual environment (Python 3.12 recommended)
 py -3.12 -m venv .venv
-.venv\Scripts\activate
+.venv\Scripts\Activate
 
-# Install dependencies
+# Upgrade pip and install dependencies
 pip install --upgrade pip
 pip install -r requirements.txt
 
-# Run database migrations (if using Alembic)
+# (Optional) Run database migrations if using Alembic
 alembic upgrade head
 
-# Start the FastAPI server
+# Start the FastAPI development server
 uvicorn src.main:app --reload
 ```
 
 ### macOS / Linux
 ```bash
-# Clone repository
+# Clone the repository
 git clone https://github.com/tbourn/swapi-voting-api.git
 cd swapi-voting-api
 
-# Create and activate virtual environment
+# Create and activate a virtual environment (Python 3.12 recommended)
 python3 -m venv .venv
 source .venv/bin/activate
 
-# Install dependencies
+# Upgrade pip and install dependencies
 pip install --upgrade pip
 pip install -r requirements.txt
 
-# Run database migrations (if using Alembic)
+# (Optional) Run database migrations if using Alembic
 alembic upgrade head
 
-# Start the FastAPI server
+# Start the FastAPI development server
 uvicorn src.main:app --reload
+
 ```
 
 ⚠️ Make sure Python 3.12 or higher is installed. If python3.12 is not available on PATH, install it first, or use the correct alias (like python3 if it points to 3.12+).
@@ -131,8 +132,9 @@ VERIFY_SWAPI_SSL=True
 UPSTASH_REDIS_URL=rediss://YOUR_UPSTASH_REDIS_URL
 ```
 
-✅ Replace YOUR_UPSTASH_REDIS_URL with your actual Upstash Redis connection string. 
-⚠️ Do not commit real secrets to version control. 
+❗ **IMPORTANT:** Replace `YOUR_UPSTASH_REDIS_URL` with your actual [Upstash Redis](https://upstash.com/) connection string.   
+⚠️ **Never commit real secrets to version control. Always use environment variables or secure vaults for production secrets.**
+
 
 ## 🐳 Running with Docker
 This repository includes a production-ready Dockerfile.
@@ -205,7 +207,9 @@ Below is a reference of all available RESTful endpoints:
 ✅ **Tip:** Explore and test all routes interactively at **/docs**.
 
 
-## 👨‍💻 Author & Maintainer  
-Thomas Bournaveas  
-📧 thomas.bournaveas@gmail.com  
-🔗 https://thomasbournaveas.com/
+## 👨‍💻 Author & Maintainer
+
+**Thomas Bournaveas**  
+📧 **[thomas.bournaveas@gmail.com](mailto:thomas.bournaveas@gmail.com)**  
+🌐 **[Website](https://thomasbournaveas.com)**  
+💼 **[LinkedIn](https://www.linkedin.com/in/thomas-bournaveas-35a778150/)**

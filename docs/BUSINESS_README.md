@@ -6,7 +6,7 @@
 
 ## 📄 What is the SWAPI Voting API?
 
-The **SWAPI Voting API** is a backend service that connects to the public Star Wars API (SWAPI), imports rich Star Wars data (characters, films, starships), and makes it available in a structured, searchable, and locally stored format.
+The **SWAPI Voting API** is a backend service that connects to the public [Star Wars API (SWAPI)](https://swapi.info/), imports rich Star Wars data (characters, films, starships), and makes it available in a structured, searchable, and locally stored format.
 
 It’s designed to power **websites, apps, or tools** that want to display Star Wars information, let users search for characters and films, or even implement voting or fan-favorite features.
 
@@ -84,11 +84,18 @@ Frontend teams can easily build features like search, details pages, and even vo
 
 ---
 
+## 🚀 Live Demo
+
+[![Fly.io](https://img.shields.io/badge/Live%20Demo-Fly.io-blue?logo=fly.io)](https://swapi-voting-api.fly.dev)
+
+---
+
 ## 👨‍💻 Author & Maintainer
 
-- **Author**: Thomas Bournaveas
-- 📧 **Email**: thomas.bournaveas@gmail.com
-- 🌐 **Website**: [https://thomasbournaveas.com](https://thomasbournaveas.com)
+**Thomas Bournaveas**  
+📧 **[thomas.bournaveas@gmail.com](mailto:thomas.bournaveas@gmail.com)**  
+🌐 **[Website](https://thomasbournaveas.com)**  
+💼 **[LinkedIn](https://www.linkedin.com/in/thomas-bournaveas-35a778150/)**
 
 ---
 
