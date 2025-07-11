@@ -4,9 +4,16 @@
 
 ---
 
+## 🚀 Deployment
+
+[![Fly.io](https://img.shields.io/badge/Live%20Demo-Fly.io-blue?logo=fly.io)](https://swapi-voting-api.fly.dev)
+
+---
+
 ## 📚 Table of Contents
 
 - [⚡ SWAPI Voting API](#-swapi-voting-api)
+  - [🚀 Deployment](#-deployment)
   - [📚 Table of Contents](#-table-of-contents)
   - [📄 Description](#-description)
   - [✅ Features](#-features)
